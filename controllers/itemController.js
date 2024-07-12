@@ -38,4 +38,8 @@ const editItemController = async (req, res) => {
   }
 };
 
-module.exports = { getItemController, addItemController, editItemController };
+module.exports = { 
+  getItemController, 
+  addItemController, 
+  editItemController, 
+};

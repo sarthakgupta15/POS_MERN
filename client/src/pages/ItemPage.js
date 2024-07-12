@@ -28,8 +28,7 @@ const ItemPage = () => {
 
   //useEffect
   useEffect(() => {
-    
-    getAllItems()
+    getAllItems();
   }, []);
 
   //Table data
@@ -65,21 +64,43 @@ const ItemPage = () => {
 
   //handle form Submit
   const handleSubmit = async (value) => {
-    try{
-      dispatch({
-          type: 'SHOW_LOADING',
-      });
-      const res = await axios.post("/api/items/add-item", value);
-      message.success('Item Added Succesfully');
-      getAllItems();
-      setPopupModal(false);
-      dispatch({
-          type: "HIDE_LOADING",
-      });
-      
-    } catch (error) {
-      message.error('Something went wrong')
-      console.log(error);
+    if(editItem === null){
+      try{
+        dispatch({
+            type: 'SHOW_LOADING',
+        });
+        const res = await axios.post("/api/items/add-item", value);
+        message.success('Item Added Succesfully');
+        getAllItems();
+        setPopupModal(false);
+        dispatch({
+            type: "HIDE_LOADING",
+        });
+        
+      } catch (error) {
+        message.error('Something went wrong')
+        console.log(error);
+      }
+    } else{
+        try{
+          dispatch({
+              type: 'SHOW_LOADING',
+          });
+          await axios.put("/api/items/edit-item", {
+            ...value, 
+            itemId: editItem._id
+          });
+          message.success('Item Updated Succesfully');
+          getAllItems();
+          setPopupModal(false);
+          dispatch({
+              type: "HIDE_LOADING",
+          });
+          
+        } catch (error) {
+          message.error('Something went wrong')
+          console.log(error);
+        }      
     }
   };
 
