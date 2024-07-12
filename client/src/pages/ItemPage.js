@@ -8,6 +8,7 @@ const ItemPage = () => {
   const dispatch = useDispatch();
   const [itemsData, setItemsData] = useState([]);
   const [popupModal, setPopupModal] = useState(false);
+  const [editItem, setEditItem] = useState(null);
 
   const getAllItems = async () => {
     try{
@@ -48,8 +49,15 @@ const ItemPage = () => {
         dataIndex:"_id", 
         render: (id, record) => (
           <div> 
+            <EditOutlined 
+              style = {{ cursor: 'pointer' }} 
+              onClick={() => {
+                setEditItem(record);
+                setPopupModal(true);
+            }}
+            />
             <DeleteOutlined style = {{ cursor: 'pointer' }} />
-            <EditOutlined style = {{ cursor: 'pointer' }} />
+            
           </div>
         ),
     },
@@ -86,41 +94,53 @@ const ItemPage = () => {
       
       <Table columns={columns} dataSource={itemsData} bordered/>
 
-      <Modal 
-        title="Add New Item" 
-        visible={popupModal} 
-        onCancel={() => setPopupModal(false)}
-        footer={false}
-      >
-        <Form layout = "vertical" onFinish={handleSubmit}>
+      {
+        popupModal && (
+          <Modal 
+            title= {`${editItem !== null ? 'Edit Item' : 'Add New Item'}`}
+            visible={popupModal} 
+            onCancel={() => {
+              setEditItem(null);
+              setPopupModal(false)
+            
+            }}
+            footer={false}
+          >
+            <Form 
+              layout = "vertical" 
+              initialValues={editItem} 
+              onFinish={handleSubmit}
+            >
 
-          <Form.Item name="name" label="Name">
-            <Input/>
-          </Form.Item>
+              <Form.Item name="name" label="Name">
+                <Input/>
+              </Form.Item>
 
-          <Form.Item name="price" label="Price">
-            <Input/>
-          </Form.Item>
+              <Form.Item name="price" label="Price">
+                <Input/>
+              </Form.Item>
 
-          <Form.Item name="image" label="Image URL">
-            <Input/>
-          </Form.Item>
+              <Form.Item name="image" label="Image URL">
+                <Input/>
+              </Form.Item>
 
-          <Form.Item name="category" label="Category">
-            <Select>
-              <Select.Option value = "drinks">Drinks</Select.Option>
-              <Select.Option value = "rice">Rice</Select.Option>
-              <Select.Option value = "noodles">Noodles</Select.Option>
-            </Select>
-          </Form.Item>
-          
-          <div className = "d-flex justify-content-end">
-            <Button type = "primary" htmlType="submit">SAVE</Button>
-          </div>
+              <Form.Item name="category" label="Category">
+                <Select>
+                  <Select.Option value = "drinks">Drinks</Select.Option>
+                  <Select.Option value = "rice">Rice</Select.Option>
+                  <Select.Option value = "noodles">Noodles</Select.Option>
+                </Select>
+              </Form.Item>
+              
+              <div className = "d-flex justify-content-end">
+                <Button type = "primary" htmlType="submit">SAVE</Button>
+              </div>
 
-        </Form>
-        
+            </Form>
+            
       </Modal>
+        )
+      }
 
     </DefaultLayout>
   );
