@@ -3,7 +3,7 @@ import DefaultLayout from "../components/DefaultLayout";
 import { useDispatch } from "react-redux";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import axios from "axios";
-import { Modal, Button, Table } from "antd";
+import { Modal, Button, Table, Form, Input, Select } from "antd";
 
 const ItemPage = () => {
   const dispatch = useDispatch();
@@ -70,9 +70,34 @@ const ItemPage = () => {
         onCancel={() => setPopupModal(false)}
         footer={false}
       >
-        <p>Some contents...</p>
-        <p>Some contents...</p>
-        <p>Some contents...</p>
+        <Form layout = "vertical">
+
+          <Form.Item name="name" label="Name">
+            <Input/>
+          </Form.Item>
+
+          <Form.Item name="price" label="Price">
+            <Input/>
+          </Form.Item>
+
+          <Form.Item name="image" label="Image URL">
+            <Input/>
+          </Form.Item>
+
+          <Form.Item name="category" label="Category">
+            <Select>
+              <Select.Option value = "drinks">Drinks</Select.Option>
+              <Select.Option value = "rice">Rice</Select.Option>
+              <Select.Option value = "noodles">Noodles</Select.Option>
+            </Select>
+          </Form.Item>
+          
+          <div className = "d-flex justify-content-end">
+            <Button type = "primary" htmlType="submit">SAVE</Button>
+          </div>
+
+        </Form>
+        
       </Modal>
 
     </DefaultLayout>
