@@ -3,31 +3,33 @@ import DefaultLayout from "../components/DefaultLayout";
 import { useDispatch } from "react-redux";
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import axios from "axios";
-import { Modal, Button, Table, Form, Input, Select } from "antd";
-
-const ItemPage = () => {
+import { Modal, Button, Table, Form, Input, Select, message } from "antd";
+const ItemPage = () => { 
   const dispatch = useDispatch();
   const [itemsData, setItemsData] = useState([]);
-  const [popupModal, setPopupModal] = useState(false)
+  const [popupModal, setPopupModal] = useState(false);
+
+  const getAllItems = async () => {
+    try{
+        dispatch({
+            type: 'SHOW_LOADING',
+        });
+        const { data } = await axios.get("/api/items/get-item");
+        setItemsData(data);
+        dispatch({
+            type: "HIDE_LOADING",
+        });
+        console.log(data);
+    } catch (error) {
+        console.log(error);
+    }
+  };
+
   //useEffect
   useEffect(() => {
-    const getAllItems = async () => {
-        try{
-            dispatch({
-                type: 'SHOW_LOADING',
-            });
-            const { data } = await axios.get("/api/items/get-item");
-            setItemsData(data);
-            dispatch({
-                type: "HIDE_LOADING",
-            });
-            console.log(data);
-        } catch (error) {
-            console.log(error);
-        }
-    };
+    
     getAllItems()
-  }, [dispatch]);
+  }, []);
 
   //Table data
   const columns = [
@@ -53,6 +55,26 @@ const ItemPage = () => {
     },
   ];
 
+  //handle form Submit
+  const handleSubmit = async (value) => {
+    try{
+      dispatch({
+          type: 'SHOW_LOADING',
+      });
+      const res = await axios.post("/api/items/add-item", value);
+      message.success('Item Added Succesfully');
+      getAllItems();
+      setPopupModal(false);
+      dispatch({
+          type: "HIDE_LOADING",
+      });
+      
+    } catch (error) {
+      message.error('Something went wrong')
+      console.log(error);
+    }
+  };
+
   return (
     <DefaultLayout>
       <div className="d-flex justify-content-between">
@@ -70,7 +92,7 @@ const ItemPage = () => {
         onCancel={() => setPopupModal(false)}
         footer={false}
       >
-        <Form layout = "vertical">
+        <Form layout = "vertical" onFinish={handleSubmit}>
 
           <Form.Item name="name" label="Name">
             <Input/>
